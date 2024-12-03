@@ -1,0 +1,7 @@
+[workspace]
+members = ["crates/*"]
+resolver = "2"
+
+[workspace.dependencies]
+aoc_runner = { path = "crates/aoc_runner" }
+day-01 = { path = "crates/day-01" }
