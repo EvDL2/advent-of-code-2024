@@ -1,7 +1,9 @@
 # Advent of Code 2024
 Solutions in Rust
 
-### Commands
+<https://adventofcode.com/2024/>
+
+
 Running a test
 ```rust
 cargo test --lib -p day-01 part1
