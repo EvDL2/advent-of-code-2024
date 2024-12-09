@@ -12,7 +12,10 @@ pub fn solve(input: &str) -> Result<i32, Box<dyn Error>> {
 
     for element in left {
         let num_element_in_right = right.iter().filter(|&i| *i == element).count() as i32;
-        println!("For {} in left, found {} instances in right", element, num_element_in_right);
+        #[cfg(debug_assertions)]
+        {
+            dbg!("For {} in left, found {} instances in right", element, num_element_in_right);
+        }
         total += element * num_element_in_right;
     }
 
