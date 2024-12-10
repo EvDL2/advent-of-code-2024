@@ -3,31 +3,35 @@ use std::error::Error;
 
 pub fn solve(input: &str) -> Result<u32, Box<dyn Error>> {
     let mat = parse_input(input);
-    let diff_lower_bound = 1;
-    let diff_upper_bound = 3;
+    let lower_bound: i32 = 1; // lower bound of the difference
+    let upper_bound: i32 = 3; // upper bound of the difference
 
-    // let t_vec = mat[0];
-    // let diff_mat = t_vec
-    //     .windows(2)
-    //     .map(|x| {
-    //         let tmp = x[1] - x[0];
-    //         tmp >= diff_lower_bound && tmp >= diff_upper_bound
-    //     })
-    //     .collect::<Vec<bool>>();
-
-    let total = mat.iter().map(|row| all_within_bound(&row, diff_lower_bound, diff_upper_bound)).count();
+    let total = mat
+        .iter()
+        .map(|row| get_diff_vec(row))
+        .map(|diff| diff_vec_meets_conditions(&diff, lower_bound, upper_bound))
+        .into_iter()
+        .filter(|b| *b)
+        .count();
     let total = u32::try_from(total).unwrap();
 
     Ok(total)
 }
 
-fn all_within_bound(v: &Vec<u32>, diff_lower_bound: u32, diff_upper_bound: u32) -> bool {
-    v.windows(2)
-        .map(|x| {
-            let diff= x[1] - x[0];
-            diff >= diff_lower_bound && diff >= diff_upper_bound
-        })
-        .all(|x| x)
+fn get_diff_vec(v: &Vec<u32>) -> Vec<i32> {
+    // Return a vector of differences between consecutive elements
+    let v: Vec<i32> = v.iter().map(|&x| x as i32).collect();
+    v.windows(2).map(|x| x[1] - x[0]).collect()
+}
+
+fn diff_vec_meets_conditions(v: &Vec<i32>, lower_bound: i32, upper_bound: i32) -> bool {
+    let bounds = v
+        .iter()
+        .map(|&diff| diff.abs() >= lower_bound && diff.abs() <= upper_bound)
+        .all(|x| x);
+    let monotonic_increase = v.iter().all(|&x| x >= 0);
+    let monotonic_decrease = v.iter().all(|&x| x <= 0);
+    bounds && (monotonic_increase || monotonic_decrease)
 }
 
 pub fn parse_input(input: &str) -> Vec<Vec<u32>> {
