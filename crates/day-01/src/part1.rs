@@ -1,7 +1,6 @@
 use std::error::Error;
 
 pub fn solve(input: &str) -> Result<i32, Box<dyn Error>> {
-    println!("I'm in the function for solving Day 1!");
     let (mut left, mut right) = parse_input(input);
     
     // Sort both columns
@@ -35,13 +34,6 @@ pub fn parse_input(input: &str) -> (Vec<i32>, Vec<i32>) {
             right.push(row[1].parse::<i32>().expect("Value must be an integer"));
         }
     }
-
-    // Alternatively, with hindsight
-    // for line in input.lines() {
-    //     let mut row = line.split_whitespace();
-    //     left.push(row.next().unwrap().parse::<i32>().expect("Value must be an integer"));
-    //     right.push(row.next().unwrap().parse::<i32>().expect("Value must be an integer"));
-    // }
 
     (left, right)
 }
