@@ -1,7 +1,0 @@
-[package]
-name = "aoc_runner"
-version = "0.1.0"
-edition = "2021"
-
-[dependencies]
-day-01 = { workspace = true }
