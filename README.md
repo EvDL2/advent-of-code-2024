@@ -1,6 +1,4 @@
 # Advent of Code 2024
-Solutions in Rust
-
 <https://adventofcode.com/2024/>
 
 
