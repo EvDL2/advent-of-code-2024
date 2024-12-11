@@ -3,7 +3,6 @@ members = ["crates/*"]
 resolver = "2"
 
 [workspace.dependencies]
-aoc_runner = { path = "crates/aoc_runner" }
 day-01 = { path = "crates/day-01" }
 day-02 = { path = "crates/day-02" }
 day-03 = { path = "crates/day-03" }

@@ -3,36 +3,45 @@ use regex::Regex;
 use std::error::Error;
 
 pub fn solve(input: &str) -> Result<i32, Box<dyn Error>> {
+    // Get the matches and positions of matches to the expressions of interest
     let regex_str = r"mul\(\d{1,3},\d{1,3}\)";
     let do_str = r"do\(\)";
     let dont_str = r"don't\(\)";
-    let (do_matches, do_position) = find_all_matches(&do_str, input);
-    let (dont_matches, dont_position) = find_all_matches(&dont_str, input);
-    let (regex_matches, regex_position) = find_all_matches(&regex_str, input);
-    let mut onoff = concatenate_vectors_with_zero(&do_position, &dont_position);
-    onoff.sort();
-    println!("{:?}", &do_position);
-    println!("{:?}", &dont_position);
-    println!("{:?}", &onoff);
+    let (_do_matches, do_positions) = find_all_matches(&do_str, input);
+    let do_positions = concatenate_vectors(&vec![0], &do_positions);
+    let (_dont_matches, dont_positions) = find_all_matches(&dont_str, input);
+    let (regex_matches, regex_positions) = find_all_matches(&regex_str, input);
 
-    let ints: Vec<(i32, i32)> = regex_matches
-        .iter()
-        .map(|pair| extract_integers((&pair).to_string()))
-        .collect();
-    
-    // let result: i32 = ints.iter().map(|(l, r)| l * r).sum();
-    Ok(0)
+    let mut total = 0;
+
+    // Loop over regex matches
+    // For each match, find the closest smallest instances of do() and dont'()
+    // If the position of do() is greater than the position of dont(), add to the total
+    for (idx, pair) in regex_matches.iter().enumerate() {
+        let (l, r) = extract_integers((&pair).to_string());
+        let pair_position = regex_positions[idx];
+        let closest_smaller_do = closest_smaller_element(do_positions.clone(), pair_position);
+        let closest_smaller_dont = closest_smaller_element(dont_positions.clone(), pair_position);
+        if closest_smaller_do > closest_smaller_dont {
+            total += l * r;
+        }
+    }
+
+    Ok(total)
 }
 
-fn concatenate_vectors_with_zero(vec1: &[usize], vec2: &[usize]) -> Vec<usize> {
+fn concatenate_vectors(vec1: &[usize], vec2: &[usize]) -> Vec<usize> {
     // Concatenate vectors from references into a mutable vector
-    // Add a zero as the first element
-    let zero_vec: Vec<usize> = vec![0];
-    let mut concatenated_vec = Vec::with_capacity(1 + vec1.len() + vec2.len());
-    concatenated_vec.extend_from_slice(&zero_vec);
+    let mut concatenated_vec = Vec::with_capacity(vec1.len() + vec2.len());
     concatenated_vec.extend_from_slice(vec1);
     concatenated_vec.extend_from_slice(vec2);
     concatenated_vec
+}
+
+fn closest_smaller_element(mut vec: Vec<usize>, target: usize) -> Option<usize> {
+    // Get the element closest to, but smaller than, the target
+    vec.sort_unstable();
+    vec.into_iter().rev().find(|&x| x < target)
 }
 
 fn extract_integers(input: String) -> (i32, i32) {
