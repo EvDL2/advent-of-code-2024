@@ -3,11 +3,12 @@ use regex::Regex;
 use std::error::Error;
 
 pub fn solve(input: &str) -> Result<i32, Box<dyn Error>> {
-    // Get the matches and positions of matches to the expressions of interest
+    // Get the matches and their positions
     let regex_str = r"mul\(\d{1,3},\d{1,3}\)";
     let do_str = r"do\(\)";
     let dont_str = r"don't\(\)";
     let (_do_matches, do_positions) = find_all_matches(&do_str, input);
+    // Append zero to the front since the challenge states that mul instructions are enabled at the beginning
     let do_positions = concatenate_vectors(&vec![0], &do_positions);
     let (_dont_matches, dont_positions) = find_all_matches(&dont_str, input);
     let (regex_matches, regex_positions) = find_all_matches(&regex_str, input);
@@ -15,8 +16,8 @@ pub fn solve(input: &str) -> Result<i32, Box<dyn Error>> {
     let mut total = 0;
 
     // Loop over regex matches
-    // For each match, find the closest smallest instances of do() and dont'()
-    // If the position of do() is greater than the position of dont(), add to the total
+    // For each match, find the closest instances of do() and dont'() that are smaller than position of the mul expression
+    // If the position of do() is greater than the position of dont() (aka, do() happened more recently), add to the total
     for (idx, pair) in regex_matches.iter().enumerate() {
         let (l, r) = extract_integers((&pair).to_string());
         let pair_position = regex_positions[idx];
