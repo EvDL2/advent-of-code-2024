@@ -16,8 +16,9 @@ pub fn solve(input: &str) -> Result<i32, Box<dyn Error>> {
     let mut total = 0;
 
     // Loop over regex matches
-    // For each match, find the closest instances of do() and dont'() that are smaller than position of the mul expression
-    // If the position of do() is greater than the position of dont() (aka, do() happened more recently), add to the total
+    // For each match, find the closest instances of do() and don't() that are smaller than position of the mul expression
+    // If the instance of do() is greater than the instance of don't() (aka, do() happened more recently), add to the total
+    // NOTE: This might fail if there are no instances of don't() in the input
     for (idx, pair) in regex_matches.iter().enumerate() {
         let (l, r) = extract_integers((&pair).to_string());
         let pair_position = regex_positions[idx];
